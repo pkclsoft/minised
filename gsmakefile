@@ -1,0 +1,13 @@
+; Apple IIGS makefile for minised.
+;
+; This makefile is for use with the mk tool which can be sourced at: https://github.com/pkclsoft/MK
+;
+
+sedcomp.a 
+	sedcomp.c sed.h { assemble sedcomp.c keep=$ }
+	
+sedexec.a 
+	sedexec.c sed.h { assemble sedexec.c keep=$ }
+
+sed
+	sedexec.a sedcomp.a { link sedexec sedcomp keep=sed }

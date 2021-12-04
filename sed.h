@@ -3,6 +3,10 @@
    Copyright (C) 2004-2005 Rene Rebe
 */
 
+/* On the Apple IIGS, we need this pragma to ensure that the code/data is split across
+   multiple segments as it exceeds a single bank  */
+#pragma memorymodel 1
+
 #define TRUE            1
 #define FALSE           0
 
