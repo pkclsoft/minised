@@ -1,5 +1,6 @@
 *.h filter=crtext
 *.c filter=crtext
 *.md filter=crtext
+help/sed filter=crtext
 makefile filter=crtext
 makefilegs filter=crtext
