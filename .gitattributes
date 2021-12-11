@@ -2,7 +2,7 @@
 *.c filter=crtext
 *.md filter=crtext
 help/sed filter=crtext
-makefile filter=crtext
+Makefile filter=crtext
 makefilegs filter=crtext
 *.in filter=crtext
 *.sed filter=crtext
