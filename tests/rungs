@@ -1,0 +1,35 @@
+set errors 0
+unset exit
+
+for testsed in {parameters}
+  echo -N "Running {testsed}"
+  
+  sed -f {testsed}.sed {testsed}.in > {testsed}.tmp
+  set errcode {Status}
+* echo -N "sed status: {errcode}.."
+  
+  exists {testsed}.out
+  set existStatus {Status}
+  
+* echo -N "exists status: {existStatus}.."
+
+  if {existStatus} == 0 
+    if {errcode} == 0
+      echo " Passed (unexpected)"
+    else
+      echo " Failed (as expected)"
+    end
+  else
+    echo -N "..checking.."
+    
+    cmp -S {testsed}.tmp {testsed}.out
+    
+    if {Status} == 0
+      echo " Passed"
+    else
+      echo " Failed !!!"
+    end
+  end
+  
+  delete {testsed}.tmp
+end

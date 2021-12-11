@@ -4,3 +4,8 @@
 help/sed filter=crtext
 makefile filter=crtext
 makefilegs filter=crtext
+*.in filter=crtext
+*.sed filter=crtext
+*.out filter=crtext
+rungs filter=crtext
+runallgs filter=crtext
