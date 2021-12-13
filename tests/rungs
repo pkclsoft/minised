@@ -4,7 +4,7 @@ unset exit
 for testsed in {parameters}
   echo -N "Running {testsed}"
   
-  sed -f {testsed}.sed {testsed}.in > {testsed}.tmp
+  /host/minised/sed -f {testsed}.sed {testsed}.in > {testsed}.tmp
   set errcode {Status}
 * echo -N "sed status: {errcode}.."
   
@@ -23,13 +23,18 @@ for testsed in {parameters}
     echo -N "..checking.."
     
     cmp -S {testsed}.tmp {testsed}.out
+    set equalStatus {Status}
     
-    if {Status} == 0
+*   echo -N "results equal: {equalStatus}..."
+    
+    if {equalStatus} == 0
       echo " Passed"
     else
       echo " Failed !!!"
     end
   end
   
-  delete {testsed}.tmp
+*  delete {testsed}.tmp
+  copy -C -P {testsed}.tmp tmp/{testsed}.out
+  copy -C -P {testsed}.out out
 end

@@ -769,7 +769,12 @@ static void command(sedcmd *ipc)
    max: max chars to read */
 static char *sed_getline(char *buf, int max)
 {
-	if (fgets(buf, max, stdin) != NULL)
+	char *fgetsResult = NULL;
+	buf[0] = 0x00;
+	
+	fgetsResult = fgets(buf, max, stdin);
+	
+	if (fgetsResult != NULL)
 	{
 		int c;
 
@@ -791,9 +796,21 @@ static char *sed_getline(char *buf, int max)
 		}
 
 		return buf;		/* return ptr to terminating null */ 
-	}
-	else
+	} else if (buf[0] != 0x00) {
+		lastline = TRUE;
+		line_with_newline = FALSE;
+		
+		lnum++;			/* note that we got another line */
+		/* find the end of the input and overwrite a possible '\n' */
+		while (*buf != '\n' && *buf != 0)
+		    buf++;
+		*buf = 0x00;
+		
+		return buf;		/* return ptr to terminating null */ 
+	} else
 	{
+		int c;
+		c = fgetc(stdin);
 		return BAD;
 	}
 }

@@ -32,11 +32,11 @@ sedcmd	cmds[MAXCMDS+1];	/* hold compiled commands */
 long	linenum[MAXLINES];	/* numeric-addresses table */
 
 /* miscellaneous shared variables */ 
-int	nflag;			/* -n option flag */
+int	nflag = 0;			/* -n option flag */
 int	eargc;			/* scratch copy of argument count */
 sedcmd	*pending	= NULL;	/* next command to be executed */
 
-int	last_line_used = 0;	/* last line address ($) was used */
+int	last_line_used = FALSE;	/* last line address ($) was used */
 
 void die (const char* msg) {
 	fprintf(stderr, "sed: ");
@@ -123,8 +123,8 @@ static int	bcount	= 0;		/* # tagged patterns in current RE */
 static char	**eargv;		/* scratch copy of argument list */
 
 /* compilation flags */
-static int	eflag;			/* -e option flag */
-static int	gflag;			/* -g option flag */
+static int	eflag = 0;			/* -e option flag */
+static int	gflag = 0;			/* -g option flag */
 
 /* prototypes */
 static char *address(char *expbuf);
@@ -325,6 +325,11 @@ static int cmdcomp(char cchar)
 	fname[0] = "/dev/stdout";
 	fname[1] = "/dev/stderr";
 
+	cmdp->flags.global = 0;
+	cmdp->flags.allbut = 0;
+	cmdp->flags.print = 0;
+	cmdp->flags.inrange = 0;
+	
 	switch(cchar)
 	{
 	case '{':	/* start command group */
@@ -434,10 +439,12 @@ static int cmdcomp(char cchar)
 		
 		if ((cmdp->rhs = fp) > poolend) die(TMTXT);
 		if ((fp = rhscomp(cmdp->rhs, redelim)) == BAD) die(CGMSG);
-		if (gflag) cmdp->flags.global++;
+		if (gflag) {
+			cmdp->flags.global = 1;
+		}
 		while (*cp == 'g' || *cp == 'p' || *cp == 'P' || isdigit(*cp))
 		{
-			IFEQ(cp, 'g') cmdp->flags.global++;
+			IFEQ(cp, 'g') cmdp->flags.global = 1;
 			IFEQ(cp, 'p') cmdp->flags.print = 1;
 			IFEQ(cp, 'P') cmdp->flags.print = 2;
 			if (isdigit(*cp))
