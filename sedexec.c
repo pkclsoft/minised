@@ -795,8 +795,16 @@ static char *sed_getline(char *buf, int max)
 		  }
 		}
 
-		return buf;		/* return ptr to terminating null */ 
+		return buf;		/* return ptr to terminating null */
+		
+#ifdef AppleIIGS
+	// This condition was added for the AppleIIGS port	because the ORCA/C
+	// implementation of fgets does not behave correctly at the end of
+  // a file when there is no line-ending on the final line of the file.
+  //
 	} else if (buf[0] != 0x00) {
+	  // So even though fgets() has returned NULL, there are some characters
+	  // present that have been read into buf.
 		lastline = TRUE;
 		line_with_newline = FALSE;
 		
@@ -807,6 +815,7 @@ static char *sed_getline(char *buf, int max)
 		*buf = 0x00;
 		
 		return buf;		/* return ptr to terminating null */ 
+#endif
 	} else
 	{
 		int c;
