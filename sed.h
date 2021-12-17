@@ -1,6 +1,6 @@
 /* sed.h -- types and constants for the stream editor
    Copyright (C) 1995-2003 Eric S. Raymond
-   Copyright (C) 2004-2005 Rene Rebe
+   Copyright (C) 2004-2017 Rene Rebe
 */
 
 #define AppleIIGS 1
@@ -18,8 +18,8 @@
 /* data area sizes used by both modules */
 #define MAXBUF		4000	/* current line buffer size */
 #define MAXAPPENDS	20	/* maximum number of appends */
-#define MAXTAGS		9	/* tagged patterns are \1 to \9 */
-#define MAXCMDS		200	/* maximum number of compiled commands */
+#define MAXTAGS	9	/* tagged patterns are \1 to \9 */
+#define MAXCMDS	200	/* maximum number of compiled commands */
 #define MAXLINES	256	/* max # numeric addresses to compile */ 
 
 /* constants for compiled-command representation */
@@ -35,7 +35,7 @@
 #define CHCMD	0x0A	/* H -- append hold space to pattern space	*/
 #define ICMD	0x0B	/* i -- insert text before current line 	*/
 #define LCMD	0x0C	/* l -- print pattern space in escaped form	*/
-#define CLCMD   0x20	/* L -- hexdump					*/
+#define CLCMD	0x20	/* L -- hexdump					*/
 #define NCMD	0x0D	/* n -- get next line into pattern space	*/
 #define CNCMD	0x0E	/* N -- append next line to pattern space	*/
 #define PCMD	0x0F	/* p -- print pattern space to output		*/
@@ -81,8 +81,8 @@ sedcmd;		/* use this name for declarations */
 #define CDOT	4	/* dot wild-card marker */
 #define CCL	6	/* character class follows */
 #define CNL	8	/* match line start */
-#define CDOL	10	/* match line end */
-#define CBRA	12	/* tagged pattern start marker */
+#define CDOL	12	/* match line end */
+#define CBRA	24	/* tagged pattern start marker */
 #define CKET	14	/* tagged pattern end marker */
 #define CBACK	16	/* backslash-digit pair marker */
 #define CLNUM	18	/* numeric-address index follows */
