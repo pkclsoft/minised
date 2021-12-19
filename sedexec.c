@@ -1,6 +1,6 @@
 /* sedexec.c -- axecute compiled form of stream editor commands
    Copyright (C) 1995-2003 Eric S. Raymond
-   Copyright (C) 2004-2014 Rene Rebe
+   Copyright (C) 2004-2021 Rene Rebe
 
    The single entry point of this module is the function execute(). It
 may take a string argument (the name of a file to be used as text)  or
@@ -26,7 +26,7 @@ extern sedcmd	cmds[];		/* hold compiled commands */
 extern long	linenum[];	/* numeric-addresses table */
 
 /* miscellaneous shared variables */
-extern int	nflag;		/* -n option flag */
+extern short	nflag;		/* -n option flag */
 extern int	eargc;		/* scratch copy of argument count */
 extern sedcmd	*pending;	/* ptr to command waiting to be executed */
 
@@ -295,10 +295,10 @@ static int advance(char* lp, char* ep, char** eob)
 			return TRUE;		/* return true */
 
 		case CCL:		/* a closure */
-			c = *lp++ & 0177;
-			if (ep[c>>3] & bits(c & 07))	/* is char in set? */
+			c = *lp++;
+			if (ep[((unsigned char)c)>>3] & bits(c & 07))	/* is char in set? */
 			{
-				ep += 16;	/* then skip rest of bitmask */
+				ep += 32;	/* then skip rest of bitmask */
 				continue;	/*   and keep going */
 			}
 			return FALSE;		/* else return false */
@@ -384,9 +384,9 @@ static int advance(char* lp, char* ep, char** eob)
 		case CCL|STAR:		/* match [...]* */
 			curlp = lp;		/* save closure start loc */
 			do {
-				c = *lp++ & 0x7F;	/* match any in set */
-			} while (ep[c>>3] & bits(c & 07));
-			ep += 16;		/* skip past the set */
+				c = *lp++;	/* match any in set */
+			} while (ep[((unsigned char)c)>>3] & bits(c & 07));
+			ep += 32;		/* skip past the set */
 			goto star;		/* match followers */
 
 		star:		/* the recursion part of a * or + match */

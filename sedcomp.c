@@ -1,6 +1,6 @@
 /* sedcomp.c -- stream editor main and compilation phase
    Copyright (C) 1995-2003 Eric S. Raymond
-   Copyright (C) 2004-2014 Rene Rebe
+   Copyright (C) 2004-2021 Rene Rebe
 
    The stream editor compiles its command input  (from files or -e options)
 into an internal form using compile() then executes the compiled form using
@@ -32,11 +32,11 @@ sedcmd	cmds[MAXCMDS+1];	/* hold compiled commands */
 long	linenum[MAXLINES];	/* numeric-addresses table */
 
 /* miscellaneous shared variables */ 
-int	nflag;			/* -n option flag */
+short	nflag;			/* -n option flag */
 int	eargc;			/* scratch copy of argument count */
 sedcmd	*pending	= NULL;	/* next command to be executed */
 
-int	last_line_used = 0;	/* last line address ($) was used */
+short	last_line_used = 0;	/* last line address ($) was used */
 
 void die (const char* msg) {
 	fprintf(stderr, "sed: ");
@@ -65,8 +65,8 @@ static const char	AD2NG[]	= "only one address allowed for %s";
 static const char	TMCDS[]	= "too many commands, last was %s";
 static const char	COCFI[]	= "cannot open command-file %s";
 static const char	UFLAG[]	= "unknown flag %c";
-static const char	CCOFI[]	= "cannot create %s";
-static const char	ULABL[]	= "undefined label %s";
+static const char	CCOFI[]	= "cannot create %s\n";
+static const char	ULABL[]	= "undefined label %s\n";
 static const char	TMLBR[]	= "too many {'s";
 static const char	FRENL[]	= "first RE must be non-null";
 static const char	NSCAX[]	= "no such command as %s";
@@ -94,7 +94,7 @@ static const char* cclasses[] = {
 	"print", " -\x7e",
 	"graph", "!-\x7e",
 	"punct", "!-/:-@[-`{-\x7e",
-	NULL, NULL};
+	NULL};
  
 typedef struct			/* represent a command label */
 {
@@ -115,7 +115,7 @@ static char	*poolend = pool + POOLSIZE;	/* pointer past pool end */
 
 /* compilation state */
 static FILE	*cmdf	= NULL;		/* current command source */
-static char	*cp	= linebuf;	/* compile pointer */
+static char	*cp;			/* compile pointer */
 static sedcmd	*cmdp	= cmds;		/* current compiled-cmd ptr */
 static char	*lastre	= NULL;		/* old RE pointer */
 static int	bdepth	= 0;		/* current {}-nesting level */
@@ -123,8 +123,8 @@ static int	bcount	= 0;		/* # tagged patterns in current RE */
 static char	**eargv;		/* scratch copy of argument list */
 
 /* compilation flags */
-static int	eflag;			/* -e option flag */
-static int	gflag;			/* -g option flag */
+static short	eflag;			/* -e option flag */
+static short	gflag;			/* -g option flag */
 
 /* prototypes */
 static char *address(char *expbuf);
@@ -148,32 +148,32 @@ int main(int argc, char *argv[])
 	eargv	= argv;		/* set local copy of argument list */
 	cmdp->addr1 = pool;	/* 1st addr expand will be at pool start */
 	if (eargc == 1)
-		exit(0);	/* exit immediately if no arguments */
+		return 0;	/* exit immediately if no arguments */
 
 	/* scan through the arguments, interpreting each one */
 	while ((--eargc > 0) && (**++eargv == '-'))
 		switch (eargv[0][1])
 		{
 		case 'e':
-			eflag++; compile();	/* compile with e flag on */
+			eflag = 1; compile();	/* compile with e flag on */
 			eflag = 0;
 			continue;		/* get another argument */
 		case 'f':
 			if (eargc-- <= 0)	/* barf if no -f file */
-				exit(2);
+				return 2;
 			if ((cmdf = fopen(*++eargv, "r")) == NULL)
 			{
 				fprintf(stderr, COCFI, *eargv);
-				exit(2);
+				return 2;
 			}
 			compile();	/* file is O.K., compile it */
 			fclose(cmdf);
 			continue;	/* go back for another argument */
 		case 'g':
-			gflag++;	/* set global flag on all s cmds */
+			gflag = 1;	/* set global flag on all s cmds */
 			continue;
 		case 'n':
-			nflag++;	/* no print except on p flag or w */
+			nflag = 1;	/* no print except on p flag or w */
 			continue;
 		default:
 			fprintf(stdout, UFLAG, eargv[0][1]);
@@ -183,7 +183,7 @@ int main(int argc, char *argv[])
 	if (cmdp == cmds)	/* no commands have been compiled */
 	{
 		eargv--; eargc++;
-		eflag++; compile(); eflag = 0;
+		eflag = 1; compile(); eflag = 0;
 		eargv++; eargc--;
 	}
 
@@ -196,7 +196,7 @@ int main(int argc, char *argv[])
 		execute(NULL);	/*   execute commands from stdin only */
 	else while(--eargc>=0)	/* else execute only -e commands */
 		execute(*eargv++);
-	exit(0);		/* everything was O.K. if we got here */
+	return 0;		/* everything was O.K. if we got here */
 }
 
 #define	H	0x80	/* 128 bit, on if there's really code for command */
@@ -220,6 +220,11 @@ static char	cmdmask[] =
 static void compile(void)
 {
 	char	ccode;
+	if (cmdline(cp = linebuf) < 0)		/* start parsing a new line */
+		return;
+	/* no commands have been compiled? #n handling */
+	if (cmdp == cmds && *cp == '#' && cp[1] == 'n')
+		nflag = 1;	/* no print except on p flag or w */
 
 	for(;;)					/* main compilation loop */
 	{
@@ -472,7 +477,7 @@ static int cmdcomp(char cchar)
 		if ((cmdp->fout = fopen(fname[nwfiles], "w")) == NULL)
 		{
 			fprintf(stderr, CCOFI, fname[nwfiles]);
-			exit(2);
+			return 2;
 		}
 		fout[nwfiles++] = cmdp->fout;
 		break;
@@ -656,7 +661,7 @@ static char *recomp(char *expbuf, char redelim)	/* uses cp, bcount */
 			continue;
 
 		case '[':	/* begin character set pattern */
-			if (ep + 17 >= expbuf + RELIMIT)
+			if (ep + 33 >= expbuf + RELIMIT)
 				die(REITL);
 			*ep++ = CCL;		/* insert class mark */
 			if ((negclass = ((c = *sp++) == '^')))
@@ -679,14 +684,14 @@ static char *recomp(char *expbuf, char redelim)	/* uses cp, bcount */
 					  const char **it;
 					  p2 = sp+1;
 					  for (p2 = sp+1;
-					       p2 < p-2 && p2-sp-1 < sizeof(cc);
+					       p2 < p-2 && p2-sp-1 < sizeof(cc) - 1;
 					       p2++)
 					    cc[p2-sp-1] = *p2;
 					  cc[p2-sp-1] = 0; /* termination */
 
 					  it = cclasses;
 					  while (*it && strcmp(*it, cc))
-						it +=2;
+						it += 2;
 					  if (!*it++)
 					    die(CCERR);
 
@@ -725,16 +730,16 @@ static char *recomp(char *expbuf, char redelim)	/* uses cp, bcount */
 
 				/* enter (possibly translated) char in set */
 				if (c)
-					ep[c >> 3] |= bits(c & 7);
+				  ep[((unsigned char)c) >> 3] |= bits(c & 7);
 			} while
 				((c = *sp++) != ']');
 
 			/* invert the bitmask if all-but was specified */
 			if (negclass)
-				for(classct = 0; classct < 16; classct++)
+				for(classct = 0; classct < 32; classct++)
 					ep[classct] ^= 0xFF;
 			ep[0] &= 0xFE;		/* never match ASCII 0 */ 
-			ep += 16;		/* advance ep past set mask */
+			ep += 32;		/* advance ep past set mask */
 			continue;
 
 		defchar:	/* match literal character */
@@ -769,7 +774,7 @@ static int cmdline(char	*cbuf)		/* uses eflag, eargc, cmdf */
 			while((*++cbuf = *p++))
 				if (*cbuf == '\\')
 				{
-					if ((*++cbuf = *p++) == '\0')
+					if ((*++cbuf = *p++) == '0')
 						return savep = NULL, -1;
 					else
 						continue;
