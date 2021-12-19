@@ -20,6 +20,7 @@ if [ -z "$1" ]; then
 fi
 
 tmp=`mktemp || mktemp -t tmp.XXXXXXXXXX`
+tmperr=`mktemp || mktemp -t tmpErr.XXXXXXXXXX`
 errors=0
 
 for x in *.sed; do
@@ -27,9 +28,9 @@ for x in *.sed; do
 	printf "Running test $x ..."
 	cmd=$(< $x.sed)
 	if [ "${cmd:0:2}" = "#!" ]; then
-		eval $1 "${cmd#\#\! }" $x.in > $tmp 2>&1
+		eval $1 "${cmd#\#\! }" $x.in > $tmp 2> $tmperr
 	else
-		$1 -f $x.sed $x.in > $tmp 2>&1
+		$1 -f $x.sed $x.in > $tmp 2> $tmperr
 	fi
 	error=$?
 
@@ -39,7 +40,17 @@ for x in *.sed; do
 		echo " Passed (unexpected)"
 		: $((errors++))
 	elif cmp $tmp $x.out 2>&1 >/dev/null; then
-		echo " Passed"
+		if [ -f $x.err ]; then
+			if cmp $tmperr $x.err 2>&1 >/dev/null; then
+				echo " Passed"
+			else
+				echo " Failed, stderr output incorrect"
+				[ $verbose -eq 1 ] && diff -u $x.err $tmperr
+                		: $((errors++))
+			fi
+		else
+			echo " Passed"
+		fi
 	else
 		echo " Failed !!!"
 		[ $verbose -eq 1 ] && diff -u $x.out $tmp

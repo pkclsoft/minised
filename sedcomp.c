@@ -330,11 +330,6 @@ static int cmdcomp(char cchar)
 	fname[0] = "/dev/stdout";
 	fname[1] = "/dev/stderr";
 
-	cmdp->flags.global = 0;
-	cmdp->flags.allbut = 0;
-	cmdp->flags.print = 0;
-	cmdp->flags.inrange = 0;
-	
 	switch(cchar)
 	{
 	case '{':	/* start command group */
