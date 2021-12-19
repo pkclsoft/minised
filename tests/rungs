@@ -30,11 +30,13 @@ for testsed in {parameters}
     if {equalStatus} == 0
       echo " Passed"
     else
+      tcmp {testsed}.tmp {testsed}.out > tmp/{testsed}.diff
+      copy -C -P {testsed}.tmp tmp/{testsed}.out
+      copy -C -P {testsed}.out out
+
       echo " Failed !!!"
     end
   end
   
-*  delete {testsed}.tmp
-  copy -C -P {testsed}.tmp tmp/{testsed}.out
-  copy -C -P {testsed}.out out
+  delete {testsed}.tmp
 end
