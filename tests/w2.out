@@ -1,4 +1,3 @@
-print this to stderr, but don't include it in the output
 don't print this to stderr
 print this too, but *do* include it
 print this too, but *do* include it
