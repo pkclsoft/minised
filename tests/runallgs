@@ -1,5 +1,5 @@
 delete out/=.out out/=.diff
-delete tmp/=.out tmp/=.diff
+delete tmp/=.out tmp/=.diff tmp/=.err
 6/purge
 
 rungs N address address2 arg-parsing

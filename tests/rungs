@@ -4,7 +4,7 @@ unset exit
 for testsed in {parameters}
   echo -N "Running {testsed}"
   
-  /host/minised/sed -f {testsed}.sed {testsed}.in > {testsed}.tmp
+  /host/minised/sed -f {testsed}.sed {testsed}.in > {testsed}.tmp >& tmp/{testsed}.err
   set errcode {Status}
 * echo -N "sed status: {errcode}.."
   
@@ -29,6 +29,8 @@ for testsed in {parameters}
     
     if {equalStatus} == 0
       echo " Passed"
+      
+      rm tmp/{testsed}.err
     else
       tcmp {testsed}.tmp {testsed}.out > tmp/{testsed}.diff
       copy -C -P {testsed}.tmp tmp/{testsed}.out
