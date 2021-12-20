@@ -2,20 +2,37 @@ delete out/=.out out/=.diff
 delete tmp/=.out tmp/=.diff tmp/=.err
 6/purge
 
-rungs N address address2 arg-parsing
+*rungs N address address2 arg-parsing
+** rungs arg-parsing2  -- this test fails with standard macOS sed as well.
+*rungs char-class comment-curly d-all-inverted
+*rungs d-all d-inverted d empty-lhs
+*rungs eof-inverted eof-newline eof escaped-ampersand
+*rungs graph-class group-star-+ group-star-g group-star
+*rungs group-star2 group-star3 group label
+*rungs last-re lhs-backref p-all-inverted p-all
+*rungs print-class punct-class quotes range
+*rungs range2 range3 range4 range5
+*rungs range6 range7 rhs-escapes s-+
+*rungs s-+2 s-ampersand s-ampersand2 s-group-star
+*rungs s-group-star2 s-newline s-nth s-nth2
+*rungs s-nth3 s-star s-star2 s
+*rungs scomplex sg single-escaped-char t2-initrdinit
+*rungs tac test uniq
+*rungs w2 wiki xbxcx y
+
+
+rungs 8bit-class empty-lhs lhs-backref s-+ sg
+rungs N-n eof-inverted p-all-inverted s-+2 single-escaped-char
+rungs N-n2 eof-newline p-all s-ampersand t2-initrdinit
+rungs N eof print-class s-ampersand2 tac
+rungs address escaped-ampersand punct-class s-group-star test-e
+rungs address2 graph-class quotes s-group-star2 test
+rungs arg-parsing group-star-+ range s-newline uniq
 * rungs arg-parsing2  -- this test fails with standard macOS sed as well.
-rungs char-class comment-curly d-all-inverted
-rungs d-all d-inverted d empty-lhs
-rungs eof-inverted eof-newline eof escaped-ampersand
-rungs graph-class group-star-+ group-star-g group-star
-rungs group-star2 group-star3 group label
-rungs last-re lhs-backref p-all-inverted p-all
-rungs print-class punct-class quotes range
-rungs range2 range3 range4 range5
-rungs range6 range7 rhs-escapes s-+
-rungs s-+2 s-ampersand s-ampersand2 s-group-star
-rungs s-group-star2 s-newline s-nth s-nth2
-rungs s-nth3 s-star s-star2 s
-rungs scomplex sg single-escaped-char t2-initrdinit
-rungs tac test uniq
-rungs w2 wiki xbxcx y
+rungs group-star-g range2 s-nth
+rungs char-class group-star range3 s-nth2 w2
+rungs comment-curly group-star2 range4 s-nth3 wiki
+rungs d-all-inverted group-star3 range5 s-star xbxcx
+rungs d-all group range6 s-star2 y
+rungs d-inverted label range7 s
+rungs d last-re rhs-escapes scomplex

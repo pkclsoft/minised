@@ -11,7 +11,17 @@
 #pragma memorymodel 1
 #pragma lint -1
 
+/* there are a bunch of places within the code where the \n character is referenced as a
+   character or a string.  C treats them differently, so on the AppleIIGS using ORCA/C
+   we end up with "\n" outputting 0x0d, and '\n' outputting 0x0a.  So the #define below
+   should be used to ensure that \n is always the same value.  On the GS, this is 0x0d. */
+   
+#define SLASH_N '\015'
+
 #else
+
+#define SLASH_N '\012'
+
 #endif
 
 #define TRUE            1

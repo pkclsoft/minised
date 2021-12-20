@@ -639,7 +639,7 @@ static void command(sedcmd *ipc)
 		break;
 
 	case CHCMD:		/* append pattern space to hold space */
-		*hspend++ = '\n';
+		*hspend++ = SLASH_N;
 		p1 = hspend;	p2 = linebuf;
 		do {
 			if (p1 > holdsp + MAXBUF) {
@@ -683,7 +683,7 @@ static void command(sedcmd *ipc)
 	case CNCMD:		/* append next line to pattern space */
 		if (aptr > appends)
 			readout();
-		*spend++ = '\n';
+		*spend++ = SLASH_N;
 		if ((execp = sed_getline(spend,
 		                         linebuf + MAXBUF+1 - spend)) == BAD)
 		{

@@ -516,7 +516,7 @@ static char *rhscomp(char* rhsp, char delim)	/* uses bcount */
 			else /* escape */
 			{
 				switch (*p) {
-					case 'n': *rhsp = '\n'; break;
+					case 'n': *rhsp = SLASH_N; break;
 					case 'r': *rhsp = '\r'; break;
 					case 't': *rhsp = '\t'; break;
 					default: *rhsp = *p;
@@ -621,7 +621,7 @@ static char *recomp(char *expbuf, char redelim)	/* uses cp, bcount */
 			else if (c == '\n')	/* escaped newline no good */
 				return cp = sp, BAD;
 			else if (c == 'n')		/* match a newline */
-				c = '\n';
+				c = SLASH_N;
 			else if (c == 't')		/* match a tab */
 				c = '\t';
 			else if (c == 'r')		/* match a return */
@@ -723,7 +723,7 @@ static char *recomp(char *expbuf, char redelim)	/* uses cp, bcount */
 				if (c == '\\')
 				{
 					if ((c = *sp++) == 'n')
-						c = '\n';
+						c = SLASH_N;
 					else if (c == 't')
 						c = '\t';
 					else if (c == 'r')
@@ -936,11 +936,11 @@ static char *ycomp(char *ep, char delim)
 		if (c == '\\' && *sp == 'n')
 		{
 			sp++;
-			c = '\n';
+			c = SLASH_N;
 		}
 		if ((ep[c] = *tp++) == '\\' && *tp == 'n')
 		{
-			ep[c] = '\n';
+			ep[c] = SLASH_N;
 			tp++;
 		}
 		if ((ep[c] == delim) || (ep[c] == '\0'))
