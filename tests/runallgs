@@ -2,23 +2,23 @@ delete out/=.out out/=.diff
 delete tmp/=.out tmp/=.diff tmp/=.err
 6/purge
 
-*rungs N address address2 arg-parsing
-** rungs arg-parsing2  -- this test fails with standard macOS sed as well.
-*rungs char-class comment-curly d-all-inverted
-*rungs d-all d-inverted d empty-lhs
-*rungs eof-inverted eof-newline eof escaped-ampersand
-*rungs graph-class group-star-+ group-star-g group-star
-*rungs group-star2 group-star3 group label
-*rungs last-re lhs-backref p-all-inverted p-all
-*rungs print-class punct-class quotes range
-*rungs range2 range3 range4 range5
-*rungs range6 range7 rhs-escapes s-+
-*rungs s-+2 s-ampersand s-ampersand2 s-group-star
-*rungs s-group-star2 s-newline s-nth s-nth2
-*rungs s-nth3 s-star s-star2 s
-*rungs scomplex sg single-escaped-char t2-initrdinit
-*rungs tac test uniq
-*rungs w2 wiki xbxcx y
+* rungs N address address2 arg-parsing
+* * rungs arg-parsing2  -- this test fails with standard macOS sed as well.
+* rungs char-class comment-curly d-all-inverted
+* rungs d-all d-inverted d empty-lhs
+* rungs eof-inverted eof-newline eof escaped-ampersand
+* rungs graph-class group-star-+ group-star-g group-star
+* rungs group-star2 group-star3 group label
+* rungs last-re lhs-backref p-all-inverted p-all
+* rungs print-class punct-class quotes range
+* rungs range2 range3 range4 range5
+* rungs range6 range7 rhs-escapes s-+
+* rungs s-+2 s-ampersand s-ampersand2 s-group-star
+* rungs s-group-star2 s-newline s-nth s-nth2
+* rungs s-nth3 s-star s-star2 s
+* rungs scomplex sg single-escaped-char t2-initrdinit
+* rungs tac test uniq
+* rungs w2 wiki xbxcx y
 
 
 rungs 8bit-class empty-lhs lhs-backref s-+ sg
