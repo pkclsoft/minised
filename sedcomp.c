@@ -49,7 +49,7 @@ void die (const char* msg) {
 
 #define POOLSIZE	10000	/* size of string-pool space */
 #define WFILES		10	/* max # w output files that can be compiled */
-#define	RELIMIT		256	/* max chars in compiled RE */
+#define	RELIMIT		512	/* max chars in compiled RE */
 #define	MAXDEPTH	20	/* maximum {}-nesting level */
 #define	MAXLABS		50	/* max # of labels that can be handled */
 
