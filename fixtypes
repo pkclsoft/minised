@@ -1,0 +1,1 @@
+filetype =.h src 8filetype =.c src 8filetype makefilegs srcfiletype help/minised srcfiletype tests/=.sed srcfiletype tests/=.in srcfiletype tests/=.out srcfiletype tests/run=gs src 6
