@@ -18,6 +18,14 @@ readout() and memcmp() are output and string-comparison utilities.
 #include <string.h>	/* for memcmp(3) */
 #include "sed.h"	/* command type structures & miscellaneous constants */
 
+#ifdef AppleIIGS
+#include <shell.h>
+
+static const char SPINNER[] = "-\|/-";
+static int spinnerIdx = 0;
+static int userAbort = FALSE;
+#endif
+
 /***** shared variables imported from the main ******/
 
 /* main data areas */
@@ -97,6 +105,12 @@ void execute(char* file)
 	/* here's the main command-execution loop */
 	for(;;)
 	{
+#ifdef AppleIIGS
+		if (userAbort) {
+			break;
+		}
+#endif
+
 		/* get next line to filter */
 		if ((execp = sed_getline(linebuf, MAXBUF+1)) == BAD)
 			return;
@@ -768,6 +782,33 @@ static void command(sedcmd *ipc)
 	}
 }
 
+#ifdef AppleIIGS
+static void update_spinner(void) {
+	StopGSPB stopParm;
+	ConsoleOutGSPB consoleOutParm;
+	char ch = SPINNER[spinnerIdx++];
+	
+	consoleOutParm.pCount = 1;
+	
+	if (spinnerIdx > 3) {
+		spinnerIdx = 0;
+	}
+	
+	consoleOutParm.ch = ch;
+	ConsoleOutGS(&consoleOutParm);
+	consoleOutParm.ch = 010;
+	ConsoleOutGS(&consoleOutParm);
+	
+	stopParm.pCount = 1;
+	stopParm.flag = 0;
+	StopGS(&stopParm);
+	
+	if (stopParm.flag != 0) {
+		userAbort = TRUE;
+	}
+}
+#endif
+
 /* get next line of text to be filtered
    buf: where to send the input
    max: max chars to read */
@@ -776,6 +817,10 @@ static char *sed_getline(char *buf, int max)
 	char *fgetsResult = NULL;
 	buf[0] = 0x00;
 	
+#ifdef AppleIIGS
+	update_spinner();
+#endif
+
 	fgetsResult = fgets(buf, max, stdin);
 	
 	if (fgetsResult != NULL)

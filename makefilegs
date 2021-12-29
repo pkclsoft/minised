@@ -9,5 +9,5 @@ sedcomp.a
 sedexec.a 
 	sedexec.c sed.h { assemble sedexec.c keep=$ }
 
-sed
-	sedexec.a sedcomp.a { link sedexec sedcomp keep=sed }
+minised
+	sedexec.a sedcomp.a { link sedexec sedcomp keep=minised }

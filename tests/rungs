@@ -4,7 +4,7 @@ unset exit
 for testsed in {parameters}
   echo -N "Running {testsed}"
   
-  /host/minised/sed -f {testsed}.sed {testsed}.in > {testsed}.tmp >& tmp/{testsed}.err
+  ../minised -f {testsed}.sed {testsed}.in > {testsed}.tmp >& tmp/{testsed}.err
   set errcode {Status}
 * echo -N "sed status: {errcode}.."
   
